@@ -1,7 +1,6 @@
 ---
 title: "Political Polarization"
 author: "Vanessa Collier, Data Analytics and Policy, Johns Hopkins University"
-date: "`r Sys.Date()`"
 output:
   tufte::tufte_html:
     css: style.css
@@ -21,13 +20,6 @@ classoption: landscape
 subtitle: Data Visualization Portfolio
 bibliography: skeleton.bib
 ---
-
-<!-- <img src="https://scx2.b-cdn.net/gfx/news/2017/politicalpol.jpg" style=" -->
-<!--   position: absolute; -->
-<!--   top: 250px; -->
-<!--   height:300px; -->
-<!--   width:400px; -->
-<!--   "> -->
   
   <img src="https://scx2.b-cdn.net/gfx/news/2017/politicalpol.jpg" alt="Political Polling Image" style="height:400px; width:500px; display: block; margin-bottom: 20px;">
 <br>

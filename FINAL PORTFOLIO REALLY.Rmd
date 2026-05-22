@@ -1,0 +1,171 @@
+
+.section .reveal .state-background {
+    background-image: url(https://scx2.b-cdn.net/gfx/news/2017/politicalpol.jpg);
+    background-position: center center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+---
+title: "FINAL Portfolio REALLY"
+author: "Vanessa Collier"
+date: "5/1/2020"
+output: html_document
+runtime: shiny
+-----------------
+Political Polarization
+
+Contents
+<br>
+<ol> 
+<li> <h3> Media Bias - Treemap </h3></li>
+<li> <h3> Perceptions of "Fake News"- Waffle Chart Small Multiples</h3></li>
+<li> <h3> Trust Ratings of News Sources- Circular Barchart</h3></li>
+<li> <h3> Comparison of Approval & Disapproval Ratings for Parties</h3></li>
+<li> <h3> Ideology Score Intervals in Congress - Dumbell Chart</h3></li>
+<li> <h3> Ideology Scores in Congress - Density Graph </h3></li>
+<li> <h3> Rates of Bill Co-Sponsorship Across Party Lines in 116th Congress - Bubble chart</h3></li> 
+<li> <h3> Interactive Data Dashboard using Shiny & PandaR</h3></li>
+</ol> 
+
+Overview
+<p>The aim of the data visualizations presented is to explore the trends of political polarization across 3 broad categories:<br>
+<h6>-American media, public opinion and Congress</h6><br>
+
+<h3>Research Questions:</h3>
+<ol> 
+<li>How has political polarization changed over time?</li><br>
+<li>Where are Americans getting their political information?</li><br>
+<li>Do Americans trust their political news sources? </li> <br>
+<li>Has Congress changed their ideological stance as a collective?</li><br>
+<li>Is there evidence that bipartisanship exists and to what extent?</li><br>
+</ol> 
+
+Graph 1: Media Bias Treemap
+
+<br>
+<h3>Original:</h3>
+-Previously a pie chart with too many slices<br>
+-No real color scheme, just default "rainbow"
+
+<h3>Revision:</h3>
+-Treemap displays better proportions<br>
+-Grouping by bias category
+
+<h3>Possible Additional Revisions:</h3>
+-Add border around the legend<br>
+-Resize legend<br>
+-Recolor the white "center bias" <br>
+-Resize the text to be larger
+
+<h3>Context & Observations:</h3>
+-Data comes from Allsides, who developed an algorithm <br>
+for detecting and coding media bias. <br>
+-Top 25 media sources as measured by audience 
+<br>
+  
+```{r LIBRARIES, message=FALSE, warning=FALSE, paged.print=TRUE}
+# master library list:
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(waffle)
+library(ggwaffle)
+library(haven)
+install.packages("tufte")
+library(tufte)
+
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/GRAD SCHOOL - iCLOUD/SPRING 2020/Data Visualization/PROJECT/PORTFOLIO/FINAL PORTFOLIO/DATA")
+
+```
+
+
+```{r echo=FALSE, results=FALSE,error=FALSE, message=FALSE, warning=FALSE,strip.white=TRUE}
+library(tidyverse)
+library(haven)
+
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/GRAD SCHOOL - iCLOUD/SPRING 2020/Data Visualization/PROJECT/PORTFOLIO/GRAPH 2")
+
+fakenews<- read_sav("Fake_News.sav")
+#convert to factors
+pew1 <- factor(fakenews$pew1)
+pew2 <- factor(fakenews$pew2)
+pew3 <- factor(fakenews$pew3)
+pew4 <- factor(fakenews$pew4)
+pew5a <-factor(fakenews$pew5a)
+pew5b <-factor(fakenews$pew5b)
+pew5c <-factor(fakenews$pew5c)
+pew6 <- factor(fakenews$pew6)
+pew7 <- factor(fakenews$pew7)
+
+levels(pew1) <- c("Often", "Sometimes", "Hardly_ever", "Never", "Don't Know/Refused")
+levels(pew2) <- c("Often", "Sometimes", "Hardly_ever", "Never", "Don't Know/Refused")
+levels(pew3) <- c("Yes", "No", "Don't Know/Refused")
+levels(pew4) <- c("Yes", "No", "Don't Know/Refused")
+levels(pew5a) <- c("A great deal", "A fair amount","Not much", "None at all", "Don't Know/Refused")
+levels(pew5b) <- c("A great deal", "A fair amount","Not much", "None at all", "Don't Know/Refused")
+levels(pew5c) <- c("A great deal", "A fair amount","Not much", "None at all", "Don't Know/Refused")
+levels(pew6) <- c("Very", "Somewhat", "Not very", "Not at all", "Don't Know/Refused")
+levels(pew7) <- c("A great deal", "Some", "Not much","Not at all","Don't Know/Refused")
+# add categories for each question, making new tables
+table1 <- fct_count(pew1)
+table2 <- fct_count(pew2)
+table3 <- fct_count(pew3)
+table4 <- fct_count(pew4)
+table5a <- fct_count(pew5a)
+table5b <- fct_count(pew5b)
+table5c <- fct_count(pew5c)
+table6 <- fct_count(pew6)
+table7 <- fct_count(pew7)
+
+# Add percentage and Question to table
+table1 <- table1 %>% as_tibble() %>% mutate(
+      Percent = n/1002,Question="How often do you come across news stories about politics and government online that you think are not fully accurate?")
+table2 <- table2 %>% as_tibble() %>% mutate(Percent=n/1002, Question = "How often do you come across political news stories online that you think are completely made up?")
+table3 <- table3 %>% as_tibble() %>% mutate(Percent=n/1002, Question = "Have you ever shared a political news story online that you later found out was made up?")
+table4 <- table4 %>% as_tibble() %>% mutate(Percent=n/1002, Question = "Have you ever shared a political news story online that you thought AT THE TIME was made up?")
+table5a <-table5a %>% as_tibble() %>% mutate(Percent=n/1002,Question = "How much responsibility do members of the public have in trying to prevent made up stories from gaining attention?")
+table5b <-table5b %>% as_tibble() %>% mutate(Percent=n/1002,Question = "How much reponsibility do the government, politicians, and elected officials have in trying to prevent made up stories from gaining attention?")
+table5c <-table5c %>% as_tibble() %>% mutate(Percent=n/1002,Question = "How much responsibility do social networking and search sites have in trying to prevent made up stories from gaining attention?")
+table6 <-table6 %>% as_tibble() %>% mutate(Percent=n/1002, Question = "How confident are you in your own ability to recognize news that is made up?")
+table7 <-table7 %>% as_tibble() %>% mutate(Percent=n/1002, Question = "How much do you think these kinds of news stories leave Americans confused about the basic facts of current events?")
+
+# Add a new variable to round the percentage
+names(table1)[1]="Response"
+round(table1$Percent,digits=1)
+table1 <- table1 %>% mutate(rounded=round(Percent,digits=1))
+names(table2)[1]="Response"
+round(table2$Percent,digits=1)
+table2 <- table2 %>% mutate(rounded=round(Percent,digits=1))
+names(table3)[1]="Response"
+round(table3$Percent,digits=1)
+table3 <- table3 %>% mutate(rounded=round(Percent,digits=1))
+names(table4)[1]="Response"
+round(table4$Percent,digits=1)
+table4 <- table4 %>% mutate(rounded=round(Percent,digits=1))
+# Table 5a
+names(table5a)[1]="Response"
+round(table5a$Percent,digits=1)
+table5a <- table5a %>% mutate(rounded=round(Percent,digits=1))
+### Table 5b
+names(table5b)[1]="Response"
+round(table5b$Percent,digits=1)
+table5b <- table5b %>% mutate(rounded=round(Percent,digits=1))
+### Table 5c
+names(table5c)[1]="Response"
+round(table5c$Percent,digits=1)
+table5c <- table5c %>% mutate(rounded=round(Percent,digits=1))
+### Table 6
+names(table6)[1]="Response"
+round(table6$Percent,digits=1)
+table6 <- table6 %>% mutate(rounded=round(Percent,digits=1))
+### Table 7
+names(table7)[1]="Response"
+round(table7$Percent,digits=1)
+table7 <- table7 %>% mutate(rounded=round(Percent,digits=1))
+###############################################################################
+```
+
+
+
